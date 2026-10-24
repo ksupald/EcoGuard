@@ -1,10 +1,11 @@
-"""EcoGuard - Streamlit dashboard (reads from results/, no Earth Engine needed)."""
+"""EcoGuard - Streamlit dashboard (reads from the results/ folder)."""
 import os
 
 import pandas as pd
 import streamlit as st
 
 CSV = "results/summary.csv"
+SPECIES_CSV = "results/species_risk_summary.csv"
 IMG_DIR = "results/images"
 
 MODULES = {"water": "💧 Water Body Shrinkage", "forest": "🌳 Deforestation"}
@@ -69,3 +70,23 @@ if os.path.exists(img_path):
     st.image(img_path, caption=LEGEND[module], use_container_width=True)
 else:
     st.info("Image not available for this region.")
+
+# ---------- Species Risk Correlation ----------
+st.divider()
+st.subheader("🦌 Species Risk Correlation")
+
+if os.path.exists(SPECIES_CSV):
+    sp = pd.read_csv(SPECIES_CSV)
+    sp = sp[sp["module"] == module].sort_values("species_priority_rank")
+    if sp.empty:
+        st.info("No species risk data for this module.")
+    else:
+        st.bar_chart(sp.set_index("region")["composite_risk_score"])
+        t = sp[["species_priority_rank", "region", "change_pct",
+                "total_species", "max_threat", "composite_risk_score"]].copy()
+        t.columns = ["Rank", "Region", "Change (%)", "Species count",
+                     "Top IUCN threat (1-5)", "Risk score"]
+        st.dataframe(t, use_container_width=True, hide_index=True)
+        st.caption("Risk score = 0.4 × area loss + 0.2 × species count + 0.4 × IUCN threat")
+else:
+    st.info("results/species_risk_summary.csv not found. Run species_risk.py first.")

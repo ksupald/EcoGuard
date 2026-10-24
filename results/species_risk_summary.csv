@@ -1,0 +1,6 @@
+module,region,change_pct,total_species,max_threat,composite_risk_score,species_priority_rank
+forest,Talabira,-39.25,3,4,0.694,1
+forest,Hasdeo Arand,-6.87,4,4,0.455,3
+forest,Buxwaha,46.77,5,5,0.5,2
+water,Sambhar Lake,-0.2,2,2,0.202,1
+water,Kolleru Lake,5.14,2,2,0.2,2
