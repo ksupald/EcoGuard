@@ -109,40 +109,25 @@ if os.path.exists(ZONES_CSV):
 else:
     st.info("results/priority_zones.csv not found. Run priority_zoning.py first.")
 
-# ---------- Download Region Report (PDF) ----------
+# ---------- Region Insights and Report ----------
 st.divider()
-st.subheader("Download Region Report (PDF)")
-try:
-    from report_generator import build_report
-    rep_region = st.selectbox("Region", df["region"].unique(), key="rep_region")
-    st.download_button(
-        "Download PDF report",
-        data=build_report(rep_region),
-        file_name=f"EcoGuard_{rep_region.replace(' ', '_')}.pdf",
-        mime="application/pdf",
-    )
-except Exception as e:
-    st.warning(f"Report not available: {e}")
+st.subheader("Region Insights and Report")
+sel_region = st.selectbox("Choose a region", df["region"].unique(), key="insight_region")
 
-# ---------- Report and Insights ----------
-st.divider()
-st.subheader("Region Insights")
 try:
     from insights import explain_region
-    ins_region = st.selectbox("Region", df["region"].unique(), key="ins_region")
-    st.write(explain_region(ins_region))
+    st.write(explain_region(sel_region))
 except Exception as e:
-    st.warning(f"Insights not available: {e}")
+    st.info(f"Insights not available: {e}")
 
-st.subheader("Download Region Report (PDF)")
 try:
     from report_generator import build_report
-    rep_region = st.selectbox("Region", df["region"].unique(), key="rep_region")
     st.download_button(
         "Download PDF report",
-        data=build_report(rep_region),
-        file_name=f"EcoGuard_{rep_region.replace(' ', '_')}.pdf",
+        data=build_report(sel_region),
+        file_name=f"EcoGuard_{sel_region.replace(' ', '_')}.pdf",
         mime="application/pdf",
+        key="download_report",
     )
 except Exception as e:
     st.warning(f"Report not available: {e}")
