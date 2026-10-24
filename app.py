@@ -90,3 +90,21 @@ if os.path.exists(SPECIES_CSV):
         st.caption("Risk score = 0.4 × area loss + 0.2 × species count + 0.4 × IUCN threat")
 else:
     st.info("results/species_risk_summary.csv not found. Run species_risk.py first.")
+
+# ---------- Priority Ranking and Zoning ----------
+st.divider()
+st.subheader("Priority Ranking and Zoning")
+
+ZONES_CSV = "results/priority_zones.csv"
+if os.path.exists(ZONES_CSV):
+    z = pd.read_csv(ZONES_CSV)
+    ZONE_ICON = {"Red": "🔴", "Orange": "🟠", "Green": "🟢"}
+    z["zone"] = z["zone"].map(lambda v: ZONE_ICON.get(v, "") + " " + v)
+    st.dataframe(
+        z[["overall_rank", "region", "module", "change_pct",
+           "composite_risk_score", "zone", "recommended_action"]],
+        use_container_width=True, hide_index=True,
+    )
+    st.caption("Zones: Red >= 0.6, Orange >= 0.4, Green below 0.4 (risk score)")
+else:
+    st.info("results/priority_zones.csv not found. Run priority_zoning.py first.")
